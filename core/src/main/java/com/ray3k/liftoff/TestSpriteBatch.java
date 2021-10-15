@@ -112,50 +112,6 @@ public class TestSpriteBatch implements Test {
         spriteBatch.end();
 
         stage.draw();
-//        //I left the redundant gl calls in to make what's happening at each stage more clear.
-//        //Draw the background and head like normal.
-//        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-//        Gdx.gl.glBlendEquation(GL20.GL_FUNC_ADD);
-//        Gdx.gl.glColorMask(true,true, true, true);
-//        background.draw(stage.getBatch(), 0, 0, stage.getWidth(), stage.getHeight());
-//
-//        if (!headAnimation.isAnimationFinished(animationTime)) {
-//            spriteBatch.draw(headAnimation.getKeyFrame(animationTime), Gdx.input.getX() - 185,
-//                    Gdx.graphics.getHeight() - Gdx.input.getY() - 70);
-//        } else {
-//            head.draw(spriteBatch);
-//        }
-//        spriteBatch.flush();
-//
-//        //Subtract the reverse alpha from the donut. This will serve as the donut mask.
-//        spriteBatch.setBlendFunction(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
-//        Gdx.gl.glBlendEquation(GL20.GL_FUNC_REVERSE_SUBTRACT);
-//        Gdx.gl.glColorMask(false, false, false, true);
-//        donutSprite.draw(spriteBatch);
-//        spriteBatch.flush();
-//
-//        //Add back the alpha from the mask at every point generated. The donut will not be drawn here.
-//        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_DST_ALPHA);
-//        Gdx.gl.glBlendEquation(GL20.GL_FUNC_ADD);
-//        Gdx.gl.glColorMask(false, false, false, true);
-//        for (Point point : points) {
-//            mask.setCenter(point.x, point.y);
-//            mask.draw(spriteBatch);
-//        }
-//        spriteBatch.flush();
-//
-//        //Draw the donut only where alpha is less than 1.
-//        spriteBatch.setBlendFunction(GL20.GL_ONE_MINUS_DST_ALPHA, GL20.GL_DST_ALPHA);
-//        Gdx.gl.glBlendEquation(GL20.GL_FUNC_ADD);
-//        Gdx.gl.glColorMask(true, true, true, true);
-//        donutSprite.draw(spriteBatch);
-//        spriteBatch.end();
-//
-//        //Reset the blending to draw the UI above everything.
-//        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-//        Gdx.gl.glBlendEquation(GL20.GL_FUNC_ADD);
-//        Gdx.gl.glColorMask(true,true, true, true);
-//        stage.draw();
     }
     
     private static class Point {
