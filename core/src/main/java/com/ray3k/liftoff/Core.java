@@ -95,6 +95,9 @@ public class Core extends ApplicationAdapter {
             case SPRITE_BATCH:
                 test = new TestSpriteBatch();
                 break;
+            case PIXMAPS:
+                test = new TestPixmaps();
+                break;
         }
         test.prep();
     }
