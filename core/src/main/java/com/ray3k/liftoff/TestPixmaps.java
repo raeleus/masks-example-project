@@ -16,7 +16,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import static com.badlogic.gdx.graphics.Pixmap.Blending.None;
-import static com.badlogic.gdx.graphics.Pixmap.Blending.SourceOver;
 import static com.ray3k.liftoff.Core.background;
 import static com.ray3k.liftoff.Core.chomp;
 import static com.ray3k.liftoff.Core.skin;
@@ -29,10 +28,8 @@ public class TestPixmaps implements Test {
     private Animation<TextureRegion> headAnimation;
     private Sprite donutSprite;
     private float animationTime;
-    Pixmap donutPixmap;
-    private Pixmap result;
-    private Pixmap mask;
-    private Pixmap combinedMasks;
+    private Pixmap donutPixmap;
+    private Pixmap result, mask, combinedMasks;
     
     @Override
     public void prep() {
@@ -43,29 +40,14 @@ public class TestPixmaps implements Test {
         headAnimation = new Animation<>(.05f, textures, PlayMode.LOOP);
         animationTime = Float.MAX_VALUE;
         
-        donutSprite = new Sprite(skin.getRegion("donut"));
-        
         FileHandle fileHandle = Gdx.files.internal("donut.png");
+        
+        donutSprite = new Sprite(new Texture(fileHandle));
+        
         donutPixmap = new Pixmap(fileHandle);
         result = new Pixmap(fileHandle);
         mask = new Pixmap(Gdx.files.internal("bite-black.png"));
-        combinedMasks = new Pixmap(donutPixmap.getWidth(), donutPixmap.getHeight(), Format.RGBA8888);
-        combinedMasks.setBlending(SourceOver);
-        combinedMasks.setColor(Color.CLEAR);
-        combinedMasks.fill();
-    }
-    
-    private void updateDonut(int startX, int startY, int endX, int endY) {
-        result.setBlending(None);
-        for (int x = startX; x < endX; x++) {
-            for (int y = startY; y < endY; y++) {
-                result.drawPixel(x, y, donutPixmap.getPixel(x, y) & ~combinedMasks.getPixel(x, y));
-            }
-        }
-        
-        Sprite newDonutSprite = new Sprite(new Texture(result));
-        if (donutSprite != null) newDonutSprite.setPosition(donutSprite.getX(), donutSprite.getY());
-        donutSprite = newDonutSprite;
+        combinedMasks = new Pixmap(donutPixmap.getWidth(), donutPixmap.getHeight(), Format.RGBA4444);
     }
     
     @Override
@@ -112,13 +94,25 @@ public class TestPixmaps implements Test {
     }
     
     private void addMask() {
-        float pointX = Gdx.input.getX() - MathUtils.round(donutSprite.getX());
-        float pointY = Gdx.input.getY() - MathUtils.round(donutSprite.getY());
+        int pointX = Gdx.input.getX() - MathUtils.round(donutSprite.getX());
+        int pointY = Gdx.input.getY() - MathUtils.round(donutSprite.getY());
         
-        int x = (int) (pointX - mask.getWidth() / 2);
-        int y = (int) (pointY - mask.getHeight() / 2);
+        int x = pointX - mask.getWidth() / 2;
+        int y = pointY - mask.getHeight() / 2;
         combinedMasks.drawPixmap(mask, x, y);
         
         updateDonut(x, y, x + mask.getWidth(), y + mask.getHeight());
+    }
+    
+    private void updateDonut(int startX, int startY, int endX, int endY) {
+        result.setBlending(None);
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                /* Be really careful not to use the same pixmap calling drawPixel(...) inside
+                 * the method's parameters as it causes extreme performance issues */
+                result.drawPixel(x, y, donutPixmap.getPixel(x, y) & ~combinedMasks.getPixel(x, y));
+            }
+        }
+        donutSprite.setTexture(new Texture(result));
     }
 }
