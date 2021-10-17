@@ -98,6 +98,9 @@ public class Core extends ApplicationAdapter {
             case PIXMAPS:
                 test = new TestPixmaps();
                 break;
+            case SHADER:
+                test = new TestShader();
+                break;
         }
         test.prep();
     }
