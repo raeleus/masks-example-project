@@ -1,12 +1,10 @@
 package com.ray3k.liftoff;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Blending;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -17,9 +15,16 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import static com.ray3k.liftoff.Core.*;
+import static com.badlogic.gdx.graphics.Pixmap.Blending.None;
+import static com.badlogic.gdx.graphics.Pixmap.Blending.SourceOver;
+import static com.ray3k.liftoff.Core.background;
+import static com.ray3k.liftoff.Core.chomp;
+import static com.ray3k.liftoff.Core.skin;
+import static com.ray3k.liftoff.Core.spriteBatch;
+import static com.ray3k.liftoff.Core.stage;
 
 public class TestPixmaps implements Test {
+    
     private Sprite head;
     private Animation<TextureRegion> headAnimation;
     private Sprite donutSprite;
@@ -27,7 +32,7 @@ public class TestPixmaps implements Test {
     Pixmap donutPixmap;
     private Pixmap result;
     private Pixmap mask;
-    private Array<Point> points;
+    private Pixmap combinedMasks;
     
     @Override
     public void prep() {
@@ -39,31 +44,25 @@ public class TestPixmaps implements Test {
         animationTime = Float.MAX_VALUE;
         
         donutSprite = new Sprite(skin.getRegion("donut"));
-    
-        points = new Array<>();
-    
+        
         FileHandle fileHandle = Gdx.files.internal("donut.png");
         donutPixmap = new Pixmap(fileHandle);
+        result = new Pixmap(fileHandle);
         mask = new Pixmap(Gdx.files.internal("bite-black.png"));
-        result = new Pixmap(donutPixmap.getWidth(), donutPixmap.getHeight(), Format.RGBA4444);
-        updateDonut();
+        combinedMasks = new Pixmap(donutPixmap.getWidth(), donutPixmap.getHeight(), Format.RGBA8888);
+        combinedMasks.setBlending(SourceOver);
+        combinedMasks.setColor(Color.CLEAR);
+        combinedMasks.fill();
     }
     
-    private void updateDonut() {
-        result.setBlending(Blending.SourceOver);
-        result.setColor(new Color(0f, 0f, 0f, 0f));
-        result.fill();
-        for (Point point : points) {
-            result.drawPixmap(mask, point.x - mask.getWidth() / 2, point.y - mask.getHeight() / 2);
-        }
-
-        result.setBlending(Blending.None);
-        for (int x = 0; x < result.getWidth(); x++) {
-            for (int y = 0; y < result.getHeight(); y++) {
-                result.drawPixel(x, y, donutPixmap.getPixel(x, y) & ~result.getPixel(x, y));
+    private void updateDonut(int startX, int startY, int endX, int endY) {
+        result.setBlending(None);
+        for (int x = startX; x < endX; x++) {
+            for (int y = startY; y < endY; y++) {
+                result.drawPixel(x, y, donutPixmap.getPixel(x, y) & ~combinedMasks.getPixel(x, y));
             }
         }
-
+        
         Sprite newDonutSprite = new Sprite(new Texture(result));
         if (donutSprite != null) newDonutSprite.setPosition(donutSprite.getX(), donutSprite.getY());
         donutSprite = newDonutSprite;
@@ -84,8 +83,7 @@ public class TestPixmaps implements Test {
             if (donutSprite.getBoundingRectangle().contains(x, y)) {
                 animationTime = 0;
                 chomp.play();
-                points.add(new Point(x - MathUtils.round(donutSprite.getX()), Gdx.input.getY() - MathUtils.round(donutSprite.getY())));
-                updateDonut();
+                addMask();
             }
         }
         
@@ -113,13 +111,14 @@ public class TestPixmaps implements Test {
         stage.draw();
     }
     
-    private static class Point {
-        public int x;
-        public int y;
+    private void addMask() {
+        float pointX = Gdx.input.getX() - MathUtils.round(donutSprite.getX());
+        float pointY = Gdx.input.getY() - MathUtils.round(donutSprite.getY());
         
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
+        int x = (int) (pointX - mask.getWidth() / 2);
+        int y = (int) (pointY - mask.getHeight() / 2);
+        combinedMasks.drawPixmap(mask, x, y);
+        
+        updateDonut(x, y, x + mask.getWidth(), y + mask.getHeight());
     }
 }
