@@ -101,6 +101,13 @@ public class Core extends ApplicationAdapter {
             case SHADER:
                 test = new TestShader();
                 break;
+            case SHADER_VIDEO:
+                break;
+            case FRAME_BUFFER_REMOVAL:
+                test = new TestFrameBufferRemoval();
+                break;
+            case FRAME_BUFFER_TINTING:
+                break;
         }
         test.prep();
     }
