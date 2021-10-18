@@ -107,6 +107,7 @@ public class Core extends ApplicationAdapter {
                 test = new TestFrameBufferRemoval();
                 break;
             case FRAME_BUFFER_TINTING:
+                test = new TestFrameBufferTinting();
                 break;
         }
         test.prep();
