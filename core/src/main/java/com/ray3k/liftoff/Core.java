@@ -40,7 +40,6 @@ public class Core extends ApplicationAdapter {
     
     @Override
     public void create() {
-        VideoPlayer videoPlayer = VideoPlayerCreator.createVideoPlayer();
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         
         core = this;
