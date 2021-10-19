@@ -4,7 +4,6 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.video.VideoPlayer;
-import com.badlogic.gdx.video.VideoPlayer.CompletionListener;
 import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.ray3k.tenpatch.TenPatchDrawable;
 
@@ -24,7 +22,7 @@ public class Core extends ApplicationAdapter {
     public static SpriteBatch spriteBatch;
     public static TenPatchDrawable background;
     public enum Mode {
-        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), SHAPE_RENDERER("ShapeRenderer"), SHAPE_DRAWER("ShapeDrawer"), SPRITE_BATCH("SpriteBatch"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader with Video"), FRAME_BUFFER_REMOVAL("FrameBuffer Removal"), FRAME_BUFFER_TINTING("FrameBuffer Tinting");
+        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), DEPTH_BUFFER("Depth Buffer"), SHAPE_DRAWER("ShapeDrawer"), SPRITE_BATCH("SpriteBatch"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader with Video"), FRAME_BUFFER_REMOVAL("FrameBuffer Removal"), FRAME_BUFFER_TINTING("FrameBuffer Tinting");
         private String name;
     
         Mode(String name) {
@@ -68,7 +66,7 @@ public class Core extends ApplicationAdapter {
         });
     
         Array<Mode> modes = new Array<>();
-        modes.addAll(Mode.NONE, Mode.GL_SCISSOR, Mode.SCISSOR_STACK, Mode.SHAPE_RENDERER, Mode.SHAPE_DRAWER,
+        modes.addAll(Mode.NONE, Mode.GL_SCISSOR, Mode.SCISSOR_STACK, Mode.DEPTH_BUFFER, Mode.SHAPE_DRAWER,
                 Mode.SPRITE_BATCH, Mode.PIXMAPS, Mode.SHADER, Mode.SHADER_VIDEO, Mode.FRAME_BUFFER_REMOVAL,
                 Mode.FRAME_BUFFER_TINTING);
         MenuWidget menuWidget = new MenuWidget(modes);
@@ -91,8 +89,8 @@ public class Core extends ApplicationAdapter {
             case SCISSOR_STACK:
                 test = new TestScissorStack();
                 break;
-            case SHAPE_RENDERER:
-                test = new TestShapeRenderer();
+            case DEPTH_BUFFER:
+                test = new TestDepthBuffer();
                 break;
             case SHAPE_DRAWER:
                 test = new TestShapeDrawer();

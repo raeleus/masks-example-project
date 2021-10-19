@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import static com.ray3k.liftoff.Core.*;
 
-public class TestShapeRenderer implements Test {
+public class TestDepthBuffer implements Test {
     private Sprite head;
     private Animation<TextureRegion> headAnimation;
     private Sprite donutSprite;
