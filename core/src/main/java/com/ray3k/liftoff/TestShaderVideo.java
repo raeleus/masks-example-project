@@ -47,7 +47,7 @@ public class TestShaderVideo implements Test {
         float donutY = stage.getHeight() / 2f - donutSprite.getRegionHeight() / 2f;
         donutSprite.setPosition(donutX, donutY);
         
-        shader = new ShaderProgram(Gdx.files.internal("vertex.glsl"), Gdx.files.internal("fragment.glsl"));
+        shader = new ShaderProgram(Gdx.files.internal("vertex.glsl"), Gdx.files.internal("fragment-video.glsl"));
         if (!shader.isCompiled()) {
             Gdx.app.log("Shader", shader.getLog());
             Gdx.app.exit();
