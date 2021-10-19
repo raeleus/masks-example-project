@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -11,6 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.video.VideoPlayer;
+import com.badlogic.gdx.video.VideoPlayer.CompletionListener;
+import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.ray3k.tenpatch.TenPatchDrawable;
 
 public class Core extends ApplicationAdapter {
@@ -38,6 +42,7 @@ public class Core extends ApplicationAdapter {
     
     @Override
     public void create() {
+        VideoPlayer videoPlayer = VideoPlayerCreator.createVideoPlayer();
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         
         core = this;
@@ -102,6 +107,7 @@ public class Core extends ApplicationAdapter {
                 test = new TestShader();
                 break;
             case SHADER_VIDEO:
+                test = new TestShaderVideo();
                 break;
             case FRAME_BUFFER_REMOVAL:
                 test = new TestFrameBufferRemoval();
