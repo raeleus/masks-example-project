@@ -11,8 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.video.VideoPlayer;
-import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.ray3k.tenpatch.TenPatchDrawable;
 
 public class Core extends ApplicationAdapter {
@@ -22,7 +20,7 @@ public class Core extends ApplicationAdapter {
     public static SpriteBatch spriteBatch;
     public static TenPatchDrawable background;
     public enum Mode {
-        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), DEPTH_BUFFER("Depth Buffer"), SHAPE_DRAWER("ShapeDrawer"), SPRITE_BATCH("SpriteBatch"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader with Video"), FRAME_BUFFER_REMOVAL("FrameBuffer Removal"), FRAME_BUFFER_TINTING("FrameBuffer Tinting");
+        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), DEPTH_BUFFER("Depth Buffer"), DEPTH_BUFFER_SHAPE_DRAWER("Depth Buffer w/ ShapeDrawer"), BLENDING_MODE("Blending Mode"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader w/ Video"), BLEND_FUNC_SEPARATE("BlendFuncSeparate"), BLENDING_MODE_TINTING("Blending Mode Tinting");
         private String name;
     
         Mode(String name) {
@@ -65,9 +63,9 @@ public class Core extends ApplicationAdapter {
         });
     
         Array<Mode> modes = new Array<>();
-        modes.addAll(Mode.NONE, Mode.GL_SCISSOR, Mode.SCISSOR_STACK, Mode.DEPTH_BUFFER, Mode.SHAPE_DRAWER,
-                Mode.SPRITE_BATCH, Mode.PIXMAPS, Mode.SHADER, Mode.SHADER_VIDEO, Mode.FRAME_BUFFER_REMOVAL,
-                Mode.FRAME_BUFFER_TINTING);
+        modes.addAll(Mode.NONE, Mode.GL_SCISSOR, Mode.SCISSOR_STACK, Mode.DEPTH_BUFFER, Mode.DEPTH_BUFFER_SHAPE_DRAWER,
+                Mode.BLENDING_MODE, Mode.PIXMAPS, Mode.SHADER, Mode.SHADER_VIDEO, Mode.BLEND_FUNC_SEPARATE,
+                Mode.BLENDING_MODE_TINTING);
         MenuWidget menuWidget = new MenuWidget(modes);
         stage.addActor(menuWidget);
         
@@ -91,11 +89,11 @@ public class Core extends ApplicationAdapter {
             case DEPTH_BUFFER:
                 test = new TestDepthBuffer();
                 break;
-            case SHAPE_DRAWER:
-                test = new TestShapeDrawer();
+            case DEPTH_BUFFER_SHAPE_DRAWER:
+                test = new TestDepthBufferShapeDrawer();
                 break;
-            case SPRITE_BATCH:
-                test = new TestSpriteBatch();
+            case BLENDING_MODE:
+                test = new TestBlendingMode();
                 break;
             case PIXMAPS:
                 test = new TestPixmaps();
@@ -106,11 +104,11 @@ public class Core extends ApplicationAdapter {
             case SHADER_VIDEO:
                 test = new TestShaderVideo();
                 break;
-            case FRAME_BUFFER_REMOVAL:
-                test = new TestFrameBufferRemoval();
+            case BLEND_FUNC_SEPARATE:
+                test = new TestBlendFuncSeparate();
                 break;
-            case FRAME_BUFFER_TINTING:
-                test = new TestFrameBufferTinting();
+            case BLENDING_MODE_TINTING:
+                test = new TestBlendingModeTinting();
                 break;
         }
         test.prep();

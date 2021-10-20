@@ -4,29 +4,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
-import space.earlygrey.shapedrawer.ShapeDrawer;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import static com.ray3k.liftoff.Core.*;
 
-public class TestShapeDrawer implements Test {
+public class TestBlendingMode implements Test {
     private Sprite head;
     private Animation<TextureRegion> headAnimation;
     private Sprite donutSprite;
     private float animationTime;
+    private Sprite mask;
     private Array<Point> points;
-    private ShapeDrawer shapeDrawer;
+    private FrameBuffer frameBuffer;
+    private ScreenViewport frameBufferViewport;
     
     @Override
     public void prep() {
-        Gdx.gl.glLineWidth(2);
-    
         head = new Sprite(skin.getRegion("head-stationary"));
         
         Array<TextureRegion> textures = new Array<>(skin.getRegions("head"));
@@ -35,8 +37,12 @@ public class TestShapeDrawer implements Test {
         animationTime = Float.MAX_VALUE;
     
         donutSprite = new Sprite(skin.getRegion("donut"));
+        
+        mask = new Sprite(skin.getRegion("bite"));
         points = new Array<>();
-        shapeDrawer = new ShapeDrawer(spriteBatch, skin.getRegion("white-pixel"));
+        frameBuffer = new FrameBuffer(Format.RGBA4444, donutSprite.getRegionWidth(), donutSprite.getRegionHeight(), false);
+        frameBufferViewport = new ScreenViewport();
+        frameBufferViewport.update(frameBuffer.getWidth(), frameBuffer.getHeight(), true);
     }
     
     @Override
@@ -47,6 +53,7 @@ public class TestShapeDrawer implements Test {
         head.setPosition(x - 185, y - 70);
         
         donutSprite.setPosition(stage.getWidth() - donutSprite.getRegionWidth(), stage.getHeight() / 2 - donutSprite.getRegionHeight() / 2f);
+        frameBufferViewport.getCamera().position.set(donutSprite.getX() + donutSprite.getWidth() / 2, donutSprite.getY() + donutSprite.getHeight() / 2, 0);
     
         animationTime += delta;
         if (Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
@@ -63,9 +70,31 @@ public class TestShapeDrawer implements Test {
     
     @Override
     public void draw() {
-        ScreenUtils.clear(Color.BLACK);
-        
+        frameBuffer.begin();
+        frameBufferViewport.apply();
+        spriteBatch.setProjectionMatrix(frameBufferViewport.getCamera().combined);
         spriteBatch.begin();
+        ScreenUtils.clear(Color.CLEAR);
+        
+        Gdx.gl.glColorMask(true, true, true, true);
+        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        donutSprite.draw(spriteBatch);
+        spriteBatch.flush();
+        
+        Gdx.gl.glColorMask(false, false, false, true);
+        spriteBatch.setBlendFunction(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        for (Point point : points) {
+            mask.setCenter(point.x, point.y);
+            mask.draw(spriteBatch);
+        }
+        spriteBatch.end();
+        frameBuffer.end();
+        
+        stage.getViewport().apply();
+        spriteBatch.setProjectionMatrix(stage.getCamera().combined);
+        spriteBatch.begin();
+        Gdx.gl.glColorMask(true, true, true, true);
+        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         background.draw(stage.getBatch(), 0, 0, stage.getWidth(), stage.getHeight());
     
         if (!headAnimation.isAnimationFinished(animationTime)) {
@@ -75,41 +104,23 @@ public class TestShapeDrawer implements Test {
             head.draw(spriteBatch);
         }
     
+        Texture texture = frameBuffer.getColorBufferTexture();
+        TextureRegion textureRegion = new TextureRegion(texture);
+        textureRegion.flip(false, true);
+        
+        spriteBatch.draw(textureRegion, stage.getWidth() - textureRegion.getRegionWidth(), stage.getHeight() / 2 - textureRegion.getRegionHeight() / 2f);
         spriteBatch.end();
-        
-        Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
-        Gdx.gl.glDepthFunc(GL20.GL_LESS);
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glColorMask(false, false, false, false);
-        
-        spriteBatch.begin();
-        Gdx.gl.glDepthMask(true);
-        for (Point point : points) {
-            shapeDrawer.filledCircle(point.x, point.y, point.radius);
-        }
 
-        spriteBatch.end();
-        spriteBatch.begin();
-        
-        Gdx.gl.glColorMask(true, true, true, true);
-        Gdx.gl.glDepthFunc(GL20.GL_LESS);
-        donutSprite.draw(spriteBatch);
-        
-        spriteBatch.end();
-        
-        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         stage.draw();
     }
     
     private static class Point {
         public float x;
         public float y;
-        public float radius;
-    
+        
         public Point(float x, float y) {
             this.x = x;
             this.y = y;
-            radius = MathUtils.random(40f, 75f);
         }
     }
 }

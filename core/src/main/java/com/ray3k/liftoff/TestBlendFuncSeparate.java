@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import static com.ray3k.liftoff.Core.*;
 
-public class TestFrameBufferRemoval implements Test {
+public class TestBlendFuncSeparate implements Test {
     private Sprite head;
     private Animation<TextureRegion> headAnimation;
     private Sprite donutSprite;
