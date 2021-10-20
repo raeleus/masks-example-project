@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import static com.ray3k.liftoff.Core.*;
 
-public class TestBlendingModeTinting implements Test {
+public class TestBlendingFunction implements Test {
     private Sprite head;
     private Animation<TextureRegion> headAnimation;
     private Sprite donutSprite;
@@ -38,7 +38,7 @@ public class TestBlendingModeTinting implements Test {
     
         donutSprite = new Sprite(skin.getRegion("donut"));
         
-        mask = new Sprite(skin.getRegion("bite-black"));
+        mask = new Sprite(skin.getRegion("bite"));
         points = new Array<>();
         frameBuffer = new FrameBuffer(Format.RGBA4444, donutSprite.getRegionWidth(), donutSprite.getRegionHeight(), false);
         frameBufferViewport = new ScreenViewport();
@@ -76,25 +76,25 @@ public class TestBlendingModeTinting implements Test {
         spriteBatch.begin();
         ScreenUtils.clear(Color.CLEAR);
         
+        Gdx.gl.glColorMask(true, true, true, true);
+        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         donutSprite.draw(spriteBatch);
-        spriteBatch.end();
+        spriteBatch.flush();
         
-        spriteBatch.begin();
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        spriteBatch.setBlendFunctionSeparate(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, GL20.GL_ZERO, GL20.GL_DST_ALPHA);
+        Gdx.gl.glColorMask(false, false, false, true);
+        spriteBatch.setBlendFunction(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
         for (Point point : points) {
             mask.setCenter(point.x, point.y);
             mask.draw(spriteBatch);
         }
         spriteBatch.end();
         frameBuffer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         
-        ScreenUtils.clear(Color.BLACK);
         stage.getViewport().apply();
         spriteBatch.setProjectionMatrix(stage.getCamera().combined);
         spriteBatch.begin();
+        Gdx.gl.glColorMask(true, true, true, true);
+        spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         background.draw(stage.getBatch(), 0, 0, stage.getWidth(), stage.getHeight());
     
         if (!headAnimation.isAnimationFinished(animationTime)) {

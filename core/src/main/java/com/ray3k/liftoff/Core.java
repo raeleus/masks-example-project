@@ -20,7 +20,7 @@ public class Core extends ApplicationAdapter {
     public static SpriteBatch spriteBatch;
     public static TenPatchDrawable background;
     public enum Mode {
-        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), DEPTH_BUFFER("Depth Buffer"), DEPTH_BUFFER_SHAPE_DRAWER("Depth Buffer w/ ShapeDrawer"), BLENDING_MODE("Blending Mode"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader w/ Video"), BLEND_FUNC_SEPARATE("BlendFuncSeparate"), BLENDING_MODE_TINTING("Blending Mode Tinting");
+        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), DEPTH_BUFFER("Depth Buffer"), DEPTH_BUFFER_SHAPE_DRAWER("Depth Buffer w/ ShapeDrawer"), BLENDING_FUNCTION("Blending Function"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader w/ Video"), BLEND_FUNC_SEPARATE("BlendFuncSeparate"), BLENDING_FUNCTION_TINTING("Blending Function Tinting");
         private String name;
     
         Mode(String name) {
@@ -64,8 +64,8 @@ public class Core extends ApplicationAdapter {
     
         Array<Mode> modes = new Array<>();
         modes.addAll(Mode.NONE, Mode.GL_SCISSOR, Mode.SCISSOR_STACK, Mode.DEPTH_BUFFER, Mode.DEPTH_BUFFER_SHAPE_DRAWER,
-                Mode.BLENDING_MODE, Mode.PIXMAPS, Mode.SHADER, Mode.SHADER_VIDEO, Mode.BLEND_FUNC_SEPARATE,
-                Mode.BLENDING_MODE_TINTING);
+                Mode.BLENDING_FUNCTION, Mode.PIXMAPS, Mode.SHADER, Mode.SHADER_VIDEO, Mode.BLEND_FUNC_SEPARATE,
+                Mode.BLENDING_FUNCTION_TINTING);
         MenuWidget menuWidget = new MenuWidget(modes);
         stage.addActor(menuWidget);
         
@@ -92,8 +92,8 @@ public class Core extends ApplicationAdapter {
             case DEPTH_BUFFER_SHAPE_DRAWER:
                 test = new TestDepthBufferShapeDrawer();
                 break;
-            case BLENDING_MODE:
-                test = new TestBlendingMode();
+            case BLENDING_FUNCTION:
+                test = new TestBlendingFunction();
                 break;
             case PIXMAPS:
                 test = new TestPixmaps();
@@ -107,8 +107,8 @@ public class Core extends ApplicationAdapter {
             case BLEND_FUNC_SEPARATE:
                 test = new TestBlendFuncSeparate();
                 break;
-            case BLENDING_MODE_TINTING:
-                test = new TestBlendingModeTinting();
+            case BLENDING_FUNCTION_TINTING:
+                test = new TestBlendingFunctionTinting();
                 break;
         }
         test.prep();
