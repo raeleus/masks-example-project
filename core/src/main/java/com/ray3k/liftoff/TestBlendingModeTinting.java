@@ -38,7 +38,7 @@ public class TestBlendingModeTinting implements Test {
     
         donutSprite = new Sprite(skin.getRegion("donut"));
         
-        mask = new Sprite(skin.getRegion("bite"));
+        mask = new Sprite(skin.getRegion("bite-black"));
         points = new Array<>();
         frameBuffer = new FrameBuffer(Format.RGBA4444, donutSprite.getRegionWidth(), donutSprite.getRegionHeight(), false);
         frameBufferViewport = new ScreenViewport();

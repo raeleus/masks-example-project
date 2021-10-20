@@ -18,9 +18,16 @@ bite
   orig: 161, 185
   offset: 0, 0
   index: -1
+bite-black
+  rotate: false
+  xy: 1839, 1862
+  size: 161, 185
+  orig: 161, 185
+  offset: 0, 0
+  index: -1
 button-reload
   rotate: false
-  xy: 1839, 1982
+  xy: 766, 1160
   size: 65, 65
   orig: 65, 65
   offset: 0, 0
