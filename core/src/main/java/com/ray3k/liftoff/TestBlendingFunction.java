@@ -26,35 +26,35 @@ public class TestBlendingFunction implements Test {
     private Array<Point> points;
     private FrameBuffer frameBuffer;
     private ScreenViewport frameBufferViewport;
-    
+
     @Override
     public void prep() {
         head = new Sprite(skin.getRegion("head-stationary"));
-        
+
         Array<TextureRegion> textures = new Array<>(skin.getRegions("head"));
         textures.addAll(skin.getRegions("head"));
         headAnimation = new Animation<>(.05f, textures, PlayMode.LOOP);
         animationTime = Float.MAX_VALUE;
-    
+
         donutSprite = new Sprite(skin.getRegion("donut"));
-        
+
         mask = new Sprite(skin.getRegion("bite"));
         points = new Array<>();
         frameBuffer = new FrameBuffer(Format.RGBA4444, donutSprite.getRegionWidth(), donutSprite.getRegionHeight(), false);
         frameBufferViewport = new ScreenViewport();
         frameBufferViewport.update(frameBuffer.getWidth(), frameBuffer.getHeight(), true);
     }
-    
+
     @Override
     public void act(float delta) {
         float x = Gdx.input.getX();
         float y = stage.getHeight() - Gdx.input.getY();
-        
+
         head.setPosition(x - 185, y - 70);
-        
+
         donutSprite.setPosition(stage.getWidth() - donutSprite.getRegionWidth(), stage.getHeight() / 2 - donutSprite.getRegionHeight() / 2f);
         frameBufferViewport.getCamera().position.set(donutSprite.getX() + donutSprite.getWidth() / 2, donutSprite.getY() + donutSprite.getHeight() / 2, 0);
-    
+
         animationTime += delta;
         if (Gdx.input.isButtonJustPressed(Buttons.LEFT)) {
             if (donutSprite.getBoundingRectangle().contains(x, y)) {
@@ -63,11 +63,11 @@ public class TestBlendingFunction implements Test {
                 points.add(new Point(x, y));
             }
         }
-    
+
         stage.act(delta);
         background.update(delta);
     }
-    
+
     @Override
     public void draw() {
         frameBuffer.begin();
@@ -75,12 +75,12 @@ public class TestBlendingFunction implements Test {
         spriteBatch.setProjectionMatrix(frameBufferViewport.getCamera().combined);
         spriteBatch.begin();
         ScreenUtils.clear(Color.CLEAR);
-        
+
         Gdx.gl.glColorMask(true, true, true, true);
         spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         donutSprite.draw(spriteBatch);
         spriteBatch.flush();
-        
+
         Gdx.gl.glColorMask(false, false, false, true);
         spriteBatch.setBlendFunction(GL20.GL_ZERO, GL20.GL_ONE_MINUS_SRC_ALPHA);
         for (Point point : points) {
@@ -89,35 +89,35 @@ public class TestBlendingFunction implements Test {
         }
         spriteBatch.end();
         frameBuffer.end();
-        
+
         stage.getViewport().apply();
         spriteBatch.setProjectionMatrix(stage.getCamera().combined);
         spriteBatch.begin();
         Gdx.gl.glColorMask(true, true, true, true);
         spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         background.draw(stage.getBatch(), 0, 0, stage.getWidth(), stage.getHeight());
-    
+
         if (!headAnimation.isAnimationFinished(animationTime)) {
             spriteBatch.draw(headAnimation.getKeyFrame(animationTime), Gdx.input.getX() - 185,
                     Gdx.graphics.getHeight() - Gdx.input.getY() - 70);
         } else {
             head.draw(spriteBatch);
         }
-    
+
         Texture texture = frameBuffer.getColorBufferTexture();
         TextureRegion textureRegion = new TextureRegion(texture);
         textureRegion.flip(false, true);
-        
+
         spriteBatch.draw(textureRegion, stage.getWidth() - textureRegion.getRegionWidth(), stage.getHeight() / 2 - textureRegion.getRegionHeight() / 2f);
         spriteBatch.end();
 
         stage.draw();
     }
-    
+
     private static class Point {
         public float x;
         public float y;
-        
+
         public Point(float x, float y) {
             this.x = x;
             this.y = y;
