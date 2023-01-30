@@ -20,7 +20,7 @@ public class Core extends ApplicationAdapter {
     public static SpriteBatch spriteBatch;
     public static TenPatchDrawable background;
     public enum Mode {
-        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), DEPTH_BUFFER("Depth Buffer"), DEPTH_BUFFER_SHAPE_DRAWER("Depth Buffer w/ ShapeDrawer"), BLENDING_FUNCTION("Blending Function"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader w/ Video"), BLEND_FUNC_SEPARATE("BlendFuncSeparate"), BLENDING_FUNCTION_TINTING("Blending Function Tinting");
+        NONE("None"), GL_SCISSOR("glScissor"), SCISSOR_STACK("ScissorStack"), DEPTH_BUFFER("Depth Buffer"), DEPTH_BUFFER_SHAPE_DRAWER("Depth Buffer w/ ShapeDrawer"), BLENDING_FUNCTION("Blending Function"), PIXMAPS("Pixmaps"), SHADER("Shader"), SHADER_VIDEO("Shader w/ Video"), BLEND_FUNC_SEPARATE("BlendFuncSeparate"), BLENDING_FUNCTION_TINTING("Blending Function Tinting"), BLENDING_FUNCTION_MORE_THAN_ONE_SPRITE("Blending Function w/ More Than One Sprite");
         private String name;
     
         Mode(String name) {
@@ -65,7 +65,7 @@ public class Core extends ApplicationAdapter {
         Array<Mode> modes = new Array<>();
         modes.addAll(Mode.NONE, Mode.GL_SCISSOR, Mode.SCISSOR_STACK, Mode.DEPTH_BUFFER, Mode.DEPTH_BUFFER_SHAPE_DRAWER,
                 Mode.BLENDING_FUNCTION, Mode.PIXMAPS, Mode.SHADER, Mode.SHADER_VIDEO, Mode.BLEND_FUNC_SEPARATE,
-                Mode.BLENDING_FUNCTION_TINTING);
+                Mode.BLENDING_FUNCTION_TINTING, Mode.BLENDING_FUNCTION_MORE_THAN_ONE_SPRITE);
         MenuWidget menuWidget = new MenuWidget(modes);
         stage.addActor(menuWidget);
         
@@ -109,6 +109,9 @@ public class Core extends ApplicationAdapter {
                 break;
             case BLENDING_FUNCTION_TINTING:
                 test = new TestBlendingFunctionTinting();
+                break;
+            case BLENDING_FUNCTION_MORE_THAN_ONE_SPRITE:
+                test = new TestBlendingFunctionMoreThanOneSprite();
                 break;
         }
         test.prep();

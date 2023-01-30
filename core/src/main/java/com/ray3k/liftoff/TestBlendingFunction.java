@@ -75,7 +75,7 @@ public class TestBlendingFunction implements Test {
         spriteBatch.setProjectionMatrix(frameBufferViewport.getCamera().combined);
         spriteBatch.begin();
         ScreenUtils.clear(Color.CLEAR);
-        
+
         Gdx.gl.glColorMask(true, true, true, true);
         spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         donutSprite.draw(spriteBatch);
